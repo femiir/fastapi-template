@@ -7,4 +7,66 @@ requires-python = ">=3.13"
 dependencies = [
     "fastapi[all]>=0.116.1",
     "gunicorn>=23.0.0",
+    "sqlmodel>=0.0.24",
 ]
+
+[dependency-groups]
+dev = [
+    "debugpy>=1.8.16",
+    "ruff>=0.12.10",
+]
+
+[tool.ruff]
+line-length = 112
+indent-width = 4
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "C",   # flake8-comprehensions
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+    "RUF", # ruff-specific rules
+]
+fixable = ["ALL"]
+unfixable = []
+
+ignore = [
+    "E501",  # line too long
+    "B008",  # do not perform function call in argument defaults
+    "RUF012"
+]
+
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-wrap-aliases = true
+known-first-party = ["config", "utils", "security"]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+split-on-trailing-comma = true
+relative-imports-order = "closest-to-furthest"
+force-sort-within-sections = true
+order-by-type = true
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "tab"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/*" = ["S101"]
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+inline-quotes = "single"
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

@@ -1,0 +1,166 @@
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Python bytecode / caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+venv.bak/
+__pypackages__/
+
+# Env files (secrets)
+.env
+.env.*
+secrets.json
+
+# Packaging / build artifacts
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+wheels/
+
+# Install / test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# Type checkers / caches
+.mypy_cache/
+.dmypy.json
+.pyre/
+
+# Logs
+*.log
+
+# DBs / local data
+*.sqlite3
+*.db
+*.db-journal
+
+# Editors / IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# PyInstaller
+*.manifest
+*.spec
+
+# C extensions / compiled files
+*.so
+*.dylib
+
+# Node (if project includes frontend)
+node_modules/
+npm-debug.log*
+yarn-error.log
+pnpm-lock.yaml
+
+# Misc
+Thumbs.db
+
+# --- Added: Common Python / FastAPI / Tooling Ignored Files ---
+
+# Python version & environment managers
+.python-version
+.pdm-python
+.envrc
+
+# Local runtime / instance state (Flask-style or custom)
+instance/
+
+# ASGI / FastAPI related runtime artifacts
+uvicorn.log
+gunicorn*.log
+
+# Task / queue systems
+celerybeat-schedule
+celerybeat.pid
+*.pid
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Type checkers / linters / formatters (additional)
+.pytype/
+.ruff_cache/
+
+# Test / QA tools extras
+.hypothesis/
+.pytest_cache/  # (already listed above; keep for clarity if moved)
+.benchmarks/
+htmlcov/
+
+# Coverage variants
+coverage.json
+coverage.xml
+*.cover
+*.py,cover
+*.lcov
+
+# Packaging / build (additional caches)
+*.manifest
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Tox / Nox
+.tox/
+.nox/
+
+# Sonar / static analysis
+.scannerwork/
+
+# Cache dirs (some tools create nested .cache already covered)
+.pytest_cache/
+
+# Local data & media (adjust if you intentionally commit some)
+media/
+uploads/
+storage/
+
+# SQLite shard patterns (already have *.sqlite3 but include alt forms)
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Misc / scratch
+*.retry
+*.bak
+*.swp
+*.swo
+*.orig
+*.tmp
+
+# Ignore generated OpenAPI schema exports if you dump them
+openapi*.json
+schema*.json
+
+# Docker compose override files (keep main compose.yml tracked)
+docker-compose.override.yml
+compose.override.yml
+
+# Editor specific (additional safety)
+.history/
+.idea_modules/
+
+# End of added section

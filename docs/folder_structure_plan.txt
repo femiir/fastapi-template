@@ -1,0 +1,116 @@
+FastAPI Project Folder Reference (Slim/prune as you grow)
+=========================================================
+Purpose: Use this as a menu. Delete or postpone folders you do NOT need yet.
+Tip: Keep the "Minimal Core" set first; add others only when a concrete need appears.
+
+------------------------------------------------------------------
+1. Minimal Core (strongly recommended to start)
+------------------------------------------------------------------
+app/api               - APIRouter modules grouped by feature (users, auth, items, etc.)
+app/core              - App factory, lifecycle wiring, settings bootstrap glue, global constants.
+app/config            - Pydantic Settings classes, env loading, feature flags.
+app/models            - ORM / persistence models (SQLAlchemy, etc.).
+app/schemas           - Pydantic request/response DTOs (public contract separate from internal models).
+app/repositories      - Data-access layer (CRUD + query abstractions) decoupling services from ORM specifics.
+app/services          - Business/domain logic orchestrating repositories, integrations, rules.
+app/db                - Engine/session creation, DB utilities, migration helpers.
+app/security          - AuthN/AuthZ utilities: password hashing, JWT/OAuth helpers, role rules.
+app/dependencies      - Reusable FastAPI dependency callables (get_db, get_current_user, pagination, etc.).
+app/exceptions        - Custom exceptions + exception handlers mapping to structured HTTP responses.
+tests                 - Test suites (unit, integration, e2e) mirroring app layout.
+migrations/versions   - Alembic migration revision files.
+
+------------------------------------------------------------------
+2. High Value (add when the need appears)
+------------------------------------------------------------------
+app/middlewares       - Custom Starlette/FastAPI middlewares (logging, correlation IDs, rate limiting).
+app/events            - Startup/shutdown events (connect DB, warm caches, schedule jobs).
+app/logging           - Logging configuration (structlog/loguru setup, formatters, filters, correlation).
+app/utils             - Generic stateless helpers (KEEP SMALL; avoid becoming a dumping ground).
+app/integrations      - External service clients (HTTP, gRPC, SDK wrappers, webhook handlers).
+app/cache             - Cache abstractions (Redis clients, caching decorators, key builders).
+app/tasks             - Background tasks / Celery / RQ / APScheduler job definitions.
+app/monitoring        - Metrics, tracing config (OpenTelemetry), health checks, profiling tools.
+app/cli               - Typer/click command entrypoints (migrate, createsuperuser, data export).
+app/domain            - Domain entities/value objects if applying DDD beyond ORM models.
+app/serializers       - Specialized serialization or custom encoders if Pydantic models aren't enough.
+scripts               - Operational / maintenance scripts (seed data, housekeeping, batch jobs).
+docs                  - Architecture decisions (ADRs), design notes, onboarding docs.
+
+------------------------------------------------------------------
+3. Presentation & Assets (only if needed)
+------------------------------------------------------------------
+app/templates         - Jinja2 templates (server-rendered pages, email bodies, PDF templates).
+app/static            - Static assets (CSS, JS, images) served directly or via CDN sync scripts.
+app/i18n              - Localization message catalogs and translation utilities.
+
+------------------------------------------------------------------
+4. Specialized / Optional Layers
+------------------------------------------------------------------
+app/workers           - Worker process entrypoints distinct from web app (Celery worker, consumers).
+app/integrations      - (Already listed) Emphasize separation of adapters from core services.
+app/cache             - (Already listed) Pull out once performance tuning starts.
+
+------------------------------------------------------------------
+5. Deletion / Deferral Guidance
+------------------------------------------------------------------
+Start ONLY with: api, core, config, models, schemas, repositories, services, db, security, dependencies, exceptions, tests, migrations/versions.
+Add middlewares when you introduce cross-cutting concerns.
+Add logging folder if you move beyond basic logging.basicConfig.
+Add tasks/workers when you queue background jobs or periodic schedules.
+Add monitoring once you deploy and need metrics/tracing.
+Add domain if your business logic becomes complex and you want richer domain objects.
+Add integrations only when calling external services (keep separate from services for testability).
+Add cache after identifying concrete performance bottlenecks.
+Add i18n only if multi-language or localized emails required.
+Add templates/static only if you serve server-side rendered views or emails with templating.
+
+------------------------------------------------------------------
+6. Common Anti-Patterns to Avoid
+------------------------------------------------------------------
+- Bloated utils: If a util starts to know about business logic, move it to services or domain.
+- Repositories leaking ORM internals to services; keep interfaces clean.
+- Schemas doubling as ORM models (mixing persistence with API contract). Keep separate for evolution.
+- Massive api routers: group by feature; compose in app/main or a router aggregator.
+- Catch-all exceptions: prefer explicit domain exceptions mapped to clear error responses.
+
+------------------------------------------------------------------
+7. Suggested Evolution Milestones
+------------------------------------------------------------------
+Milestone 1 (MVP): Minimal Core only.
+Milestone 2 (Prod readiness): + middlewares, logging, events, integrations (as needed), monitoring.
+Milestone 3 (Scale): + cache, tasks/workers, advanced security (RBAC/ABAC), domain layer.
+Milestone 4 (Mature): + i18n, templates/static (if required), dedicated cli, structured observability.
+
+------------------------------------------------------------------
+8. Naming Tips
+------------------------------------------------------------------
+- Feature routers: app/api/v1/users.py (or /users/__init__.py) for sub-packages.
+- Keep versioning at api layer only (api/v1) not across deeper layers.
+- Repositories: <feature>_repository.py or a package per feature.
+- Services: <feature>_service.py encapsulating orchestration logic.
+
+------------------------------------------------------------------
+9. Testing Parallels
+------------------------------------------------------------------
+Mirror structure under tests/ (e.g. tests/api, tests/services, tests/repositories) for fast navigation.
+
+------------------------------------------------------------------
+10. Quick Prune Checklist
+------------------------------------------------------------------
+If you are not using it TODAY, you can delete (and later recreate):
+  monitoring, cache, tasks, workers, cli, domain, serializers, i18n, templates, static, integrations (if none yet), logging (if basic), middlewares (if none custom), events (if app start is trivial), docs (if README suffices initially).
+
+------------------------------------------------------------------
+11. When to Split Into Packages
+------------------------------------------------------------------
+Split out a folder into its own installable package only when:
+- It has independent release cadence.
+- It’s reused by multiple services.
+- It introduces heavy optional deps others don’t need.
+
+------------------------------------------------------------------
+12. Final Minimal Core Recap
+api/ core/ config/ models/ schemas/ repositories/ services/ db/ security/ dependencies/ exceptions/ tests/ migrations/versions/
+
+Use this document as a working checklist; strike through (or delete) folders you remove.

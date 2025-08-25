@@ -1,0 +1,73 @@
+services:
+  
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: cerebro:dev
+    container_name: cerebro
+    env_file:
+      - .env
+    ports:
+      - "80:8000"
+      - "5678:5678"
+    networks:
+      - cerebro_network
+    depends_on:
+      db:
+        condition: service_healthy
+
+    # Remove or comment out the volumes section if you want to use only develop/watch
+    volumes:
+      - ./src:/app/src
+  
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+          # path: .
+          # target: /app
+          ignore:
+            - .venv/
+            - .git/
+            - __pycache__/
+            - "*.pyc"
+            - "*.pyo"
+            - "*.pyd"
+        - action: rebuild
+          path: ./pyproject.toml
+          target: /app/pyproject.toml
+        - action: rebuild
+          path: ./uv.lock
+          target: /app/uv.lock
+    tty: true
+       
+  db:
+    image: postgres:latest
+    container_name: cerebro_db
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - cerebro_db:/var/lib/postgresql/data
+    networks:
+      - cerebro_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+
+
+volumes:
+  cerebro_db:
+
+networks:
+  cerebro_network:
+    driver: bridge
+    attachable: true
+    name: cerebro

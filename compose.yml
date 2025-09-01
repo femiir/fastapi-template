@@ -19,11 +19,11 @@ services:
 
     # Remove or comment out the volumes section if you want to use only develop/watch
     volumes:
-      - ./src:/app/src
+      - ./src:/app/src:rw
   
     develop:
       watch:
-        - action: sync
+        - action: restart
           path: ./src
           target: /app/src
           # path: .
@@ -36,18 +36,22 @@ services:
             - "*.pyo"
             - "*.pyd"
         - action: rebuild
-          path: ./pyproject.toml
+          path: Dockerfile.dev
+        - action: rebuild
+          path: pyproject.toml
           target: /app/pyproject.toml
         - action: rebuild
-          path: ./uv.lock
+          path: uv.lock
           target: /app/uv.lock
     tty: true
        
   db:
     image: postgres:latest
     container_name: cerebro_db
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
+    expose:
+      - "5432"
     env_file:
       - .env
     volumes:

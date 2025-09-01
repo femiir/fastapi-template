@@ -5,8 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "alembic>=1.16.4",
     "fastapi[all]>=0.116.1",
     "gunicorn>=23.0.0",
+    "psycopg[binary]>=3.2.9",
     "sqlmodel>=0.0.24",
 ]
 
@@ -19,35 +21,32 @@ dev = [
 [tool.ruff]
 line-length = 112
 indent-width = 4
-target-version = "py312"
+target-version = "py313"
+src = ["src"]
+respect-gitignore = true          # <-- moved here (valid)
+# Optionally: include/exclude patterns
+# include = ["pyproject.toml", "src/**/*.py", "tests/**/*.py"]
 
 [tool.ruff.lint]
 select = [
-    "E",   # pycodestyle errors
-    "W",   # pycodestyle warnings
-    "F",   # pyflakes
-    "I",   # isort
-    "C",   # flake8-comprehensions
-    "B",   # flake8-bugbear
-    "UP",  # pyupgrade
-    "RUF", # ruff-specific rules
+    "E","W","F","I","C","B","UP","SIM","PERF","PTH","DTZ","PIE","RET","TRY","RUF",
 ]
 fixable = ["ALL"]
 unfixable = []
-
 ignore = [
-    "E501",  # line too long
-    "B008",  # do not perform function call in argument defaults
-    "RUF012"
+    "E501",
+    "B008",
+    "RUF012",
+    "W191",   # ignore 'indentation contains tabs'
+    "E101",   # (optional) mix of spaces/tabs
 ]
-
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+task-tags = ["TODO","FIXME","XXX"]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
 force-wrap-aliases = true
-known-first-party = ["config", "utils", "security"]
-section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+known-first-party = ["config","db","models","schemas","api","dependencies","security","utils"]
+section-order = ["future","standard-library","third-party","first-party","local-folder"]
 split-on-trailing-comma = true
 relative-imports-order = "closest-to-furthest"
 force-sort-within-sections = true
@@ -61,8 +60,9 @@ line-ending = "auto"
 docstring-code-format = true
 
 [tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401"]
-"tests/*" = ["S101"]
+"__init__.py" = ["F401"]   # allow re-export star imports
+"tests/*" = ["S101"]       # if you later enable Bandit (S), ignore assert warnings
+"alembic/*" = ["E402", "F401", "F403"]  # (when you add Alembic scripts)
 
 [tool.ruff.lint.flake8-quotes]
 docstring-quotes = "double"

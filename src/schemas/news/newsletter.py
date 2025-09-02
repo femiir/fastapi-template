@@ -1,14 +1,18 @@
 # src/schemas/news/newsletter.py
 
-from pydantic import EmailStr, BaseModel
 from datetime import datetime
 from uuid import UUID
+
+from pydantic import BaseModel, EmailStr
+
 
 class SubscribeIn(BaseModel):
 	email: EmailStr
 
+
 class Unsubscribe(BaseModel):
 	public_id: UUID
+
 
 class SubscriberOut(BaseModel):
 	id: int
@@ -16,5 +20,5 @@ class SubscriberOut(BaseModel):
 	email: EmailStr
 	is_active: bool
 	unsubscribed_at: datetime | None
-	created_at: datetime
-	updated_at: datetime
+	created: datetime
+	updated: datetime

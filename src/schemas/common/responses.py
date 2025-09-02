@@ -21,6 +21,15 @@ class ResponseData[T](ResponseBase):
 	data: T | None = Field(default=None)
 
 
+class PaginationParams(BaseModel):
+	limit: int
+	offset: int
+
+	@property
+	def slice(self) -> tuple[int, int]:
+		return self.limit, self.offset
+
+
 class PageMeta(BaseModel):
 	total: int | None
 	limit: int

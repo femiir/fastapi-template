@@ -13,7 +13,6 @@ def get_session() -> Generator[Session]:
 	db = SessionLocal()
 	try:
 		yield db
-		db.commit()  # auto-commit pattern
 	except Exception:
 		db.rollback()
 		raise

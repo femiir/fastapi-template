@@ -6,11 +6,13 @@ from datetime import datetime
 from uuid import UUID, uuid4
 
 from pydantic import EmailStr
-from sqlalchemy import Boolean, Column, DateTime, String, UniqueConstraint, func
+from sqlalchemy import Boolean, Column, DateTime, String, UniqueConstraint
 from sqlmodel import Field, SQLModel
 
+from models import TimestampMixin
 
-class NewsletterSubscriber(SQLModel, table=True):
+
+class NewsletterSubscriber(TimestampMixin, SQLModel, table=True):
 	"""Represents a newsletter subscription."""
 
 	__tablename__ = 'newsletter_subscribers'
@@ -41,24 +43,7 @@ class NewsletterSubscriber(SQLModel, table=True):
 		description='Timestamp when user unsubscribed',
 	)
 
-	created_at: datetime = Field(
-		sa_column=Column(
-			DateTime(timezone=True),
-			nullable=False,
-			server_default=func.now(),
-		),
-		description='Row creation timestamp',
-	)
-
-	updated_at: datetime = Field(
-		sa_column=Column(
-			DateTime(timezone=True),
-			nullable=False,
-			server_default=func.now(),
-			onupdate=func.now(),
-		),
-		description='Last modification timestamp',
-	)
+	# created / updated provided by TimestampMixin
 
 	def __repr__(self) -> str:  # pragma: no cover - simple debug helper
 		return f'<NewsletterSubscriber id={self.id} email={self.email} active={self.is_active}>'

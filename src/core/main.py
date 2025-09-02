@@ -1,10 +1,18 @@
-from fastapi import FastAPI
-from config.settings import settings
 from contextlib import asynccontextmanager
-from src.db.conf import engine, init_db, db_health  
+
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from starlette import status as http_status
+
+from api import newsletter_router
+from config.settings import settings
+from db.conf import db_health, engine, init_db
+from schemas import make_response
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-	
 	with engine.connect() as conn:
 		conn.exec_driver_sql('SELECT 1')
 	if getattr(settings, 'debug', False):
@@ -15,17 +23,36 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-# Routers
-from api.news.newsletter_router import router as newsletter_router  # noqa: E402
 
 app.include_router(newsletter_router)
 
 
-@app.get('/')
-async def root():
-	return {'message': 'Hello Worlder!'}
+# ---- Global exception handlers ----
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+	return JSONResponse(
+		status_code=http_status.HTTP_422_UNPROCESSABLE_ENTITY,
+		content=make_response(
+			status_code=http_status.HTTP_422_UNPROCESSABLE_ENTITY,
+			success=False,
+			message=exc.errors(),
+		).model_dump(),
+	)
 
 
-@app.get('/info')
+@app.exception_handler(Exception)
+async def generic_exception_handler(request: Request, exc: Exception):
+	# You might log exc here.
+	return JSONResponse(
+		status_code=http_status.HTTP_500_INTERNAL_SERVER_ERROR,
+		content=make_response(
+			status_code=http_status.HTTP_500_INTERNAL_SERVER_ERROR,
+			success=False,
+			message=str(exc),
+		).model_dump(),
+	)
+
+
+@app.get('/info', tags=['Info'])
 async def info():
 	return {'app_name': settings.app_name, 'database_status': db_health()}

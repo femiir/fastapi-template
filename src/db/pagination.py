@@ -7,8 +7,7 @@ from sqlalchemy import func
 from sqlalchemy.sql import Select
 from sqlmodel import Session, select
 
-from dependencies import PaginationParams
-from schemas import PageMeta, Paginated
+from schemas import PageMeta, Paginated, PaginationParams
 
 
 def paginate_select(

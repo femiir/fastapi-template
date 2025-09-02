@@ -5,19 +5,11 @@ from __future__ import annotations
 from typing import Annotated
 
 from fastapi import Depends, Query
-from pydantic import BaseModel
+
+from schemas import PaginationParams
 
 DEFAULT_LIMIT = 50
 MAX_LIMIT = 200
-
-
-class PaginationParams(BaseModel):
-	limit: int
-	offset: int
-
-	@property
-	def slice(self) -> tuple[int, int]:
-		return self.limit, self.offset
 
 
 # ---- FASTAPI DEPENDENCY (inject into endpoints) ----

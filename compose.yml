@@ -48,8 +48,8 @@ services:
   db:
     image: postgres:latest
     container_name: cerebro_db
-    # ports:
-    #   - "5432:5432"
+    ports:
+      - "5432:5432"
     expose:
       - "5432"
     env_file:

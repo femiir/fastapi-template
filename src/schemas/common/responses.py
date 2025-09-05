@@ -65,3 +65,27 @@ def make_data_response[T](
 		message=message,
 		data=data,
 	)
+
+
+def make_paginated_response[T](
+	items: Sequence[T],
+	total: int,
+	limit: int,
+	offset: int,
+	message: str = 'Request successful',
+	status_code: int = 200,
+) -> Paginated[T]:
+	pages = (total // limit + (1 if total % limit else 0)) if limit else None
+	meta = PageMeta(
+		total=total,
+		limit=limit,
+		offset=offset,
+		pages=pages,
+	)
+	return Paginated[T](
+		success=True,
+		status_code=status_code,
+		message=message,
+		meta=meta,
+		items=items,
+	)

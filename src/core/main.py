@@ -5,7 +5,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette import status as http_status
 
-from api import newsletter_router
+from api import course_router, newsletter_router, track_router, module_router
 from config.settings import settings
 from db.conf import db_health, engine, init_db
 from schemas import make_response
@@ -25,6 +25,9 @@ app = FastAPI(lifespan=lifespan)
 
 
 app.include_router(newsletter_router)
+app.include_router(track_router)
+app.include_router(course_router)
+app.include_router(module_router)
 
 
 # ---- Global exception handlers ----

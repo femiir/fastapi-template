@@ -39,6 +39,7 @@ ignore = [
     "RUF012",
     "W191",   # ignore 'indentation contains tabs'
     "E101",   # (optional) mix of spaces/tabs
+    "UP007",  # allow use of Optional[...] instead of | None union syntax per project style
 ]
 task-tags = ["TODO","FIXME","XXX"]
 
@@ -63,6 +64,7 @@ docstring-code-format = true
 "__init__.py" = ["F401"]   # allow re-export star imports
 "tests/*" = ["S101"]       # if you later enable Bandit (S), ignore assert warnings
 "alembic/*" = ["E402", "F401", "F403"]  # (when you add Alembic scripts)
+"src/schemas/tracks/programs.py" = ["UP007"]
 
 [tool.ruff.lint.flake8-quotes]
 docstring-quotes = "double"

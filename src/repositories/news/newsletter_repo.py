@@ -6,6 +6,7 @@ from sqlalchemy import func
 from sqlmodel import Session, select
 
 from models.news import NewsletterSubscriber
+from repositories import get_public_id
 
 
 def _normalize_email(email: str) -> str:
@@ -34,11 +35,13 @@ class NewsletterRepository:
 	def get_by_public_id(
 		self, public_id: str | UUID, *, include_deleted: bool = False
 	) -> NewsletterSubscriber | None:
-		public_id_str = str(public_id)  # ensure string to match varchar column
-		stmt = select(NewsletterSubscriber).where(NewsletterSubscriber.public_id == public_id_str)
-		if (not include_deleted) and hasattr(NewsletterSubscriber, 'is_deleted'):
-			stmt = stmt.where(NewsletterSubscriber.is_deleted.is_(False))
-		return self.db.exec(stmt).first()
+		public_id_str = str(public_id)
+		return get_public_id(
+			self.db,
+			NewsletterSubscriber,
+			public_id_str,
+			include_deleted=include_deleted,
+		)
 
 	def get_all(
 		self,

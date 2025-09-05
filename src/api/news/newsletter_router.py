@@ -2,7 +2,14 @@ from fastapi import APIRouter, HTTPException, status
 
 from dependencies import DbSession, Pagination
 from repositories import NewsletterRepository
-from schemas import PageMeta, Paginated, ResponseBase, ResponseData, make_data_response, make_response
+from schemas import (
+	Paginated,
+	ResponseBase,
+	ResponseData,
+	make_data_response,
+	make_paginated_response,
+	make_response,
+)
 from schemas.news import SubscribeIn, SubscriberOut, Unsubscribe
 
 router = APIRouter(prefix='/newsletter', tags=['Newsletter'])
@@ -39,19 +46,14 @@ async def list_subscribers(pagination: Pagination, db: DbSession):
 	raw_items = repo.get_all(limit=pagination.limit, offset=pagination.offset)
 	items = [SubscriberOut.model_validate(obj, from_attributes=True) for obj in raw_items]
 	total = repo.count()
-	pages = (total // pagination.limit + (1 if total % pagination.limit else 0)) if pagination.limit else None
-	meta = PageMeta(
+
+	return make_paginated_response(
+		items=items,
 		total=total,
 		limit=pagination.limit,
 		offset=pagination.offset,
-		pages=pages,
-	)
-	return Paginated[SubscriberOut](
-		success=True,
-		status_code=status.HTTP_200_OK,
 		message='Subscribers retrieved successfully.',
-		meta=meta,
-		items=items,
+		status_code=status.HTTP_200_OK,
 	)
 
 

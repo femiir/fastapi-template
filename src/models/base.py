@@ -1,47 +1,36 @@
 # src/models/base.py
 
 from datetime import datetime
-from typing import Any
 
-from sqlalchemy import Boolean, Column, DateTime, func
+from sqlalchemy import func
 from sqlmodel import Field, SQLModel
 
 
-class TimestampMixin(SQLModel, table=False):
+class TimestampMixin(SQLModel):
 	"""
-	Reusable mixin:
-	  created / updated managed by DB defaults + onupdate.
-	  is_deleted soft delete flag.
+	Simple reusable mixin:
+	- created / updated: server-managed timestamps
+	- is_deleted: soft delete flag
+	No explicit Column objects -> no reuse conflicts.
 	"""
 
-	is_deleted: bool = Field(
-		default=False,
-		sa_column=Column(Boolean, nullable=False, server_default='false'),
-		description='Soft delete marker (False = active)',
-	)
-	created: datetime = Field(
-		sa_column=Column(
-			DateTime(timezone=True),
-			nullable=False,
-			server_default=func.now(),
-		),
+	is_deleted: bool = Field(default=False, description='Soft delete marker (False = active)')
+
+	created: datetime | None = Field(
+		default=None,
+		sa_column_kwargs={
+			'nullable': False,
+			'server_default': func.now(),
+		},
 		description='Row creation timestamp',
 	)
-	updated: datetime = Field(
-		sa_column=Column(
-			DateTime(timezone=True),
-			nullable=False,
-			server_default=func.now(),
-			onupdate=func.now(),
-		),
+
+	updated: datetime | None = Field(
+		default=None,
+		sa_column_kwargs={
+			'nullable': False,
+			'server_default': func.now(),
+			'onupdate': func.now(),
+		},
 		description='Last modification timestamp',
 	)
-
-	def soft_delete(self) -> None:
-		"""Mark row as deleted (no commit here)."""
-		self.is_deleted = True
-
-	def restore(self) -> None:
-		"""Un-delete."""
-		self.is_deleted = False
-
